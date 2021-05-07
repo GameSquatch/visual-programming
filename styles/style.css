@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
+.function-header {
+    margin: 0;
+    padding: 1.2rem 0.6rem;
+    background: #555;
+    color: white;
+}
+
+.var-box {
+    background: #ddd;
+    max-height: 12rem;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.var-box-header {
+    margin-bottom: 0.4rem;
+}
+
+.var-entry-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+}
+
+.var-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    padding: 0.1rem;
+}
+.var-row input {
+    display: inline-block;
+    padding: 0.2rem;
+}
+.var-row input, .var-row span, .remove-var-entry, .var-row select {
+    margin-right: 0.4rem;
+}
+
+button {
+    padding: 0.2rem 0.4rem;
+    border-radius: 50%;
+    color: white;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+.remove-var-entry {
+    background: red;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+.add-btn {
+    background: green;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.var-drag-handle {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    cursor: grab;
+}
+.var-drag-helper {
+    padding: 0.4rem;
+    border-radius: 0.2rem;
+    box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.35);
+    z-index: 15;
+    cursor: grabbing;
+}
+
+.flow-section {
+    padding: 1.2rem 0.4rem;
+    z-index: 0;
+}
+
+.step-btn-container {
+    position: relative;
+}
+.step-add-options-container {
+    display: none;
+    position: absolute;
+    left: 3rem;
+    top: 0;
+}
+
+.step-wrapper {
+    position: relative;
+    padding: 1rem 0 2.4rem;
+    margin-left: 1rem;
+    border-left: 1px solid black;
+}
+.step-container {
+    position: relative;
+    left: -1rem;
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.4);
+}
+.add-after-step {
+    position: absolute;
+    opacity: 0.0;
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 40%);
+    width: 1.4rem;
+    height: 1.4rem;
+    padding: 0;
+    transition: opacity 0.4s ease-out;
+    z-index: 5;
+}
+.step-wrapper:hover .add-after-step {
+    opacity: 1.0;
+}
+.step-drop-area {
+    min-height: 1.8rem;
+    padding: 0.4rem;
+    max-height: 2rem;
+    border: 1px dashed black;
+    margin-top: 0.4rem;
+}
+.highlight-step {
+    border: 2px dashed blue;
+}
