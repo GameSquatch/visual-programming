@@ -1,22 +1,23 @@
 
-export const FunctionEditorEvents = {
-    dispatchVarEntryChange: (varName, varType, varInitialValue) => {
-        const varEntryChange = new CustomEvent("varEntryChange", {
-            detail: {
-                varName,
-                varType,
-                varInitialValue
-            }
-        });
 
-        document.dispatchEvent(varEntryChange);
-    },
+export function dispatchVarEntryChange(varName, oldVarName, varType, varInitialValue) {
+    const varEntryChange = new CustomEvent("varEntryChange", {
+        detail: {
+            varName,
+            oldVarName,
+            varType,
+            varInitialValue
+        }
+    });
 
-    dispatchVarEntryDelete: (varName) => {
-        const varEntryDelete = new CustomEvent("varEntryDelete", {
-            detail: varName
-        });
+    document.dispatchEvent(varEntryChange);
+}
 
-        document.dispatchEvent(varEntryDelete);
-    }
-};
+
+export function dispatchVarEntryDelete(varName) {
+    const varEntryDelete = new CustomEvent("varEntryDelete", {
+        detail: varName
+    });
+
+    document.dispatchEvent(varEntryDelete);
+}

@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from '/src/lib/uuid/index.js';
+import { dispatchVarEntryChange, dispatchVarEntryDelete } from '/src/events/FunctionEditorEvents.js';
 
 //console.log(uuidv4());
 
@@ -30,8 +31,9 @@ const $flowSection = $(".flow-section");
 
 let flowStepsCounter = 0;
 
-$(document).on("varEntryChange", (evt) => {
-    console.log(evt.detail);
+$(document).on({
+    "varEntryChange": handleVarEntryChange,
+    "varEntryDelete": handleVarEntryDelete
 });
 
 
@@ -56,7 +58,8 @@ $(".var-box").on("click", ".remove-var-entry", (evt) => {
     const varName = $varRow.find(".var-name").val();
 
     if (varName !== "" && varName in flowState.main.variables) {
-        delete flowState.main.variables[varName];
+        dispatchVarEntryDelete(varName);
+        //delete flowState.main.variables[varName];
         $varRow.remove();
     }
 });
@@ -75,17 +78,8 @@ $(".var-box").on("change", (evt) => {
 
     const varType = $varRow.find(".var-type").val();
     const varInitialVal = $varRow.find(".var-initial-val").val();
-
     const oldName = $varName.data("prev-name");
-    if (oldName !== "" && oldName != $varName.val()) {
-        delete flowState.main.variables[oldName];
-    }
-
-    flowState.main.variables[$varName.val()] = {
-        "name": $varName.val(),
-        "type": varType,
-        "initialValue": varInitialVal
-    }
+    dispatchVarEntryChange($varName.val(), oldName, varType, varInitialVal);
 });
 
 
@@ -179,3 +173,27 @@ function createNewFlowStep($insertAfter, flowStepCount) {
     $newFlowStep.insertAfter($insertAfter);
 
 }
+
+
+function handleVarEntryChange(evt) {
+    // Update flow state for entry
+    const detail = evt.detail;
+    if (detail.oldVarName !== "" && detail.oldVarName != detail.varName) {
+        delete flowState.main.variables[detail.oldVarName];
+    }
+
+    flowState.main.variables[detail.varName] = {
+        "name": detail.varName,
+        "type": detail.varType,
+        "initialValue": detail.varInitialValue
+    }
+
+    // Propagate change to usage in current function steps
+
+}
+
+
+function handleVarEntryDelete(evt) {
+    delete flowState.main.variables[evt.detail.varName];
+}
+
