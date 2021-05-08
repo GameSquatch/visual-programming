@@ -1,4 +1,5 @@
 const express = require('express');
+const { writeGoProgram } = require('./server/write-go-program');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -10,13 +11,16 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 });
 
-app.post('/run-code', express.json(), (req, res) => {
-    let firstFlowStepVarName = 'not found';
-    if (req.body.main && req.body.main.flowSteps) {
-        firstFlowStepVarName = req.body.main.flowSteps[0].varName;
-    }
 
-    res.send(`Node received JSON: '${firstFlowStepVarName}'`);
+app.post('/run-code', express.json(), (req, res) => {
+
+    writeGoProgram(req.body)
+        .then((_) => {
+            res.send("Done writing file");
+        })
+        .catch((err) => res.send(`Err: ${err}`));
+
+    //res.send(`Node received JSON: '${firstFlowStepVarName}'`);
 });
 
 
