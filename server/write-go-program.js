@@ -4,16 +4,19 @@ const path = require('path');
 
 exports.writeGoProgram = writeGoProgram;
 
+const rootFolder = path.join(__dirname, "go");
+
 
 function writeGoProgram(flowState) {
     const writePromises = [];
-    console.log(flowState.main.variables);
+
+    writePromises.push(writeEntryFile());
 
     for (const functionName in flowState) {
         writePromises.push(
-            writeVariableBlock(flowState[functionName].variables)
+            writeVariableBlock(functionName, flowState[functionName].variables)
                 .then((_) => {
-                    return writeFlowSteps(flowState[functionName].flowSteps);
+                    return writeFlowSteps(functionName, flowState[functionName].flowSteps);
                 })
         );
     }
@@ -22,28 +25,48 @@ function writeGoProgram(flowState) {
 }
 
 
-function writeVariableBlock(variablesObj) {
-    const varLines = [];
+function writeEntryFile() {
+    const entryFileText = `package main
+    
+    func main() {
+        startProgram()
+    }`;
 
-    for (const varName in variablesObj) {
-        varLines.push(`${variablesObj[varName].name} := "${variablesObj[varName].initialValue}"`);
-    }
-
-    varLines.push('\n');
-    const textToWrite = varLines.join('\n');
-
-    return fs.writeFile(path.join(__dirname, "go/program.go"), textToWrite, {
-        flag: "a",
+    return fs.writeFile(rootFolder + "/entry.go", entryFileText, {
+        flag: "w",
         encoding: "utf-8"
     });
 }
 
 
-function writeFlowSteps(flowStepsObj) {
+function writeFunctionInitBlock(functionName, variablesObj) {
+    const varLines = ["package main\n"];
+
+    if (functionName === "main") {
+        varLines.push("func startProgram() {");
+    } else {
+        varLines.push(`func ${functionName}() {`);
+    }
+
+    for (const varName in variablesObj) {
+        varLines.push(`${variablesObj[varName].name} := "${variablesObj[varName].initialValue}"`);
+    }
+
+    varLines.push("\n");
+    const textToWrite = varLines.join('\n');
+
+    return fs.writeFile(rootFolder + `/${functionName}.go`, textToWrite, {
+        flag: "w",
+        encoding: "utf-8"
+    });
+}
+
+
+function writeFlowSteps(functionName, flowStepsObj) {
     const stepLines = [];
 
     const orderedStepIds = Object.keys(flowStepsObj).sort((flowStepIdA, flowStepIdB) => {
-        return flowStepsObj[flowStepA].order - flowStepsObj[flowStepB].order;
+        return flowStepsObj[flowStepIdA].order - flowStepsObj[flowStepIdB].order;
     });
 
     orderedStepIds.forEach((stepId) => {
@@ -51,10 +74,10 @@ function writeFlowSteps(flowStepsObj) {
         stepLines.push(`${step.varName} = "${step.setTo}"`);
     });
 
-    stepLines.push('\n');
+    stepLines.push("}");
     const textToWrite = stepLines.join('\n');
 
-    return fs.writeFile(path.join(__dirname, "go/program.go"), textToWrite, {
+    return fs.writeFile(rootFolder + `/${functionName}.go`, textToWrite, {
         flag: "a",
         encoding: "utf-8"
     });
