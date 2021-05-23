@@ -1,0 +1,56 @@
+{
+    "stepId1": {
+        "sourceType": "if",
+        "subject": {
+            "sourceType": "variable",
+            "dataType": "string",
+            "id": "a1-b2",
+            "function": {
+                "id": "string-concat",
+                "returnType": "string",
+                "args": [
+                    {
+                        "sourceType": "variable",
+                        "dataType": "string",
+                        "id": "c3-d4",
+                        "function": {
+                            "id": "value",
+                            "returnType": "",
+                            "args": []
+                        }
+                    },
+                    {
+                        "sourceType": "literal",
+                        "dataType": "string",
+                        "value": " World!"
+                    }
+                ]
+            }
+        },
+        "operator": "==",
+        "operand": {
+            "sourceType": "literal",
+            "dataType": "string",
+            "value": "Hello World!"
+        }
+    },
+    "stepId2": {
+        "sourceType": "action",
+        "subject": {
+            "sourceType": "variable",
+            "dataType": "number",
+            "id": "dd-3b",
+            "function": {
+                "id": "set to",
+                "returnType": "",
+                "args": [
+                    {
+                        "sourceType": "literal",
+                        "dataType": "number",
+                        "value": 456
+                    }
+                ]
+            }
+        }
+    }
+}

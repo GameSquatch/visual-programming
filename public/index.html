@@ -13,20 +13,24 @@
 </head>
 <body>
 
-    <h2 class="function-header">main function <button id="run-code" type="button">Run</button></h2>
+    <main class="flex-column wh-100">
 
-    <div class="var-box">
-        <h4 class="var-box-header">main function variables</h4>
-        <div class="var-entry-container"></div>
-        <button type="button" class="add-btn" id="add-var-entry">+</button>
-    </div>
+        <h2 class="function-header">main function <button id="run-code" type="button">Run</button></h2>
 
-    <section class="flow-section">
-        
-        <div class="step-btn-container">
-            <button type="button" class="add-btn" id="add-step">+</button>
+        <div class="var-box">
+            <h4 class="var-box-header">main function variables</h4>
+            <div class="var-entry-container"></div>
+            <button type="button" class="add-btn" id="add-var-entry">+</button>
         </div>
-    </section>
+
+        <section class="flex-grow-1 overflow-y-auto">
+            <div class="flow-section">
+                <div class="step-btn-container">
+                    <p class="drag-msg">Drag a variable or function here</p>
+                </div>
+            </div>
+        </section>
+    </main>
     
     <script src="./src/lib/jquery-3.6.0.min.js"></script>
     <script src="./src/lib/jquery-ui.js"></script>

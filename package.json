@@ -19,5 +19,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jquery": "^3.6.0"
   }
 }
