@@ -115,10 +115,12 @@ button {
     border-radius: 0.2rem;
     box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.35);
     z-index: 15;
+    background-color: rgba(255, 255, 255, 0.7);
     cursor: grabbing;
 }
 
 .flow-section {
+    position: relative;
     padding: 1.2rem 0.4rem;
     z-index: 0;
     border: 2px dashed black;

@@ -1,6 +1,6 @@
+export { createDropHandler };
 
-
-function emptyStepDrop(evt, { draggable, helper }) {
+function emptyStepDrop(evt, { draggable, helper, position, offset }) {
     const sourceType = helper.attr("data-source-type");
     const objId = helper.attr("data-obj-id");
     const $stepDropZoneElement = $(evt.target);// contains data-obj-id for the step
@@ -14,8 +14,8 @@ function emptyStepDrop(evt, { draggable, helper }) {
 
 
 function createDropHandler(parentFlowStateRef) {
-    return function(evt, { draggable, helper }) {
-        
+    return function(evt, { draggable, helper, position, offset }) {
+
     };
 }
 
