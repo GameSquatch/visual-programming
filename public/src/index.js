@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from '/src/lib/uuid/index.js';
-import { dispatchVarEntryChange, dispatchVarEntryDelete } from '/src/events/FunctionEditorEvents.js';
 import { throttleUiEvt } from './utils.js';
 import { HtmlString } from './HtmlCreationStrings.js';
 import { varDragHelper } from './dragHelpers.js';
@@ -59,7 +58,6 @@ import { varDragHelper } from './dragHelpers.js';
             const varName = $varRow.find(".var-name").val();
         
             if (varName !== "" && varName in flowState.main.variables) {
-                dispatchVarEntryDelete(varName);
                 //delete flowState.main.variables[varName];
                 $varRow.remove();
             }
@@ -76,11 +74,6 @@ import { varDragHelper } from './dragHelpers.js';
             if ($varName.val() === "") {
                 return;
             }
-        
-            const varType = $varRow.find(".var-type").val();
-            const varInitialVal = $varRow.find(".var-initial-val").val();
-            const oldName = $varName.data("prev-name");
-            dispatchVarEntryChange($varName.val(), oldName, varType, varInitialVal);
         });
         
         
@@ -110,12 +103,17 @@ const $flowSection = $(".flow-section");
 
 let flowStepsCounter = 0;
 
-$(document).on({
-    "varEntryChange": handleVarEntryChange,
-    "varEntryDelete": handleVarEntryDelete
+
+// The flow section "root" droppable
+$flowSection.droppable({
+    classes: {
+        "ui-droppable-hover": "highlight-step"
+    },
+    drop: flowSectionDropHandler
 });
 
-function flowSectionDropHandler(evt, { draggable, helper, position, offset }) {
+
+function flowSectionDropHandler(evt, { helper }) {
     $(".drag-msg").hide();
         
     //console.log(`Pos: ${position.top}\nOffset: ${offset.top}`);
@@ -129,20 +127,16 @@ function flowSectionDropHandler(evt, { draggable, helper, position, offset }) {
     const helperBox = helper[0].getBoundingClientRect();
     const helperYCenter = helperBox.y + (helperBox.height / 2);
 
-    if (stepElems.length === 1) {
-        const elemBox = stepElems[0].getBoundingClientRect();
-        if (helperYCenter <= (elemBox.y + (elemBox.height / 2)) ) {
-            createNewFlowStep($(".step-btn-container"));
-            console.log("Above element");
-        } else {
-            createNewFlowStep($(stepElems[0]));
-            console.log("Below element");
-        }
+    // If there was only one step, it will skip the loop and prepend.
+    // Now we need to check if the new step was dropped after that step.
+    const elemBox = stepElems[0].getBoundingClientRect();
+    if (stepElems.length === 1 && helperYCenter > (elemBox.y + (elemBox.height / 2)) ) {
+        createNewFlowStep($(stepElems[0]));
         return;
     }
 
-    
     let insertAfterElem = $(".step-btn-container");
+
     for (let i = 0; i < stepElems.length - 1; i += 1) {
         const currentElem = stepElems[i];
         const nextElem = stepElems[i + 1];
@@ -166,12 +160,22 @@ function flowSectionDropHandler(evt, { draggable, helper, position, offset }) {
     createNewFlowStep(insertAfterElem);
 }
 
-$flowSection.droppable({
-    classes: {
-        "ui-droppable-hover": "highlight-step"
-    },
-    drop: flowSectionDropHandler
-});
+
+function createNewFlowStep($insertAfter) {
+    const $newFlowStep = $(HtmlString.flowStep);
+
+    $newFlowStep.attr("id", uuidv4());
+
+    $newFlowStep.find(".step-drop-area").droppable({
+        drop: stepDropHandler,
+        classes: {
+            "ui-droppable-hover": "highlight-step"
+        },
+        greedy: true
+    });
+
+    $newFlowStep.insertAfter($insertAfter);
+}
 
 
 function createVarInFlowStepHtml(varName, varType) {
@@ -205,42 +209,6 @@ function stepDropHandler(evt, ui) {
 }
 
 
-function createNewFlowStep($insertAfter) {
-    const $newFlowStep = $(HtmlString.flowStep);
-
-    $newFlowStep.attr("id", uuidv4());
-
-    $newFlowStep.find(".step-drop-area").droppable({
-        drop: stepDropHandler,
-        classes: {
-            "ui-droppable-hover": "highlight-step"
-        },
-        greedy: true
-    });
-
-    $newFlowStep.insertAfter($insertAfter);
-}
 
 
-function handleVarEntryChange(evt) {
-    // Update flow state for entry
-    const detail = evt.detail;
-    if (detail.oldVarName !== "" && detail.oldVarName != detail.varName) {
-        delete flowState.main.variables[detail.oldVarName];
-    }
-
-    flowState.main.variables[detail.varName] = {
-        "name": detail.varName,
-        "type": detail.varType,
-        "initialValue": detail.varInitialValue
-    }
-
-    // Propagate change to usage in current function steps
-
-}
-
-
-function handleVarEntryDelete(evt) {
-    delete flowState.main.variables[evt.detail.varName];
-}
 
